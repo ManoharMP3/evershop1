@@ -13,7 +13,7 @@ pipeline {
             steps {
                 // Install jest-junit and run tests
                 bat 'npm i jest-junit'
-                bat 'npx jest --coverage ./unit'
+                bat 'npx jest --coverage ./unit || exit 1' // Stop the pipeline if any test fails
             }
             post {
                 success {
@@ -24,38 +24,6 @@ pipeline {
                 }
             }
         }
-        
-        stage('Build') {
-            steps {
-                // Build the application
-                bat 'npx create-evershop-app my-app'
-                bat 'npm install @evershop/evershop'
-                bat 'npm run setup'
-                bat 'npm run build'
-            }
-            post {
-                success {
-                    echo 'Build successful!'
-                }
-                failure {
-                    echo 'Build failed! Please check the logs for more details.'
-                }
-            }
-        }
-        
-        stage('Deploy') {
-            steps {
-                // Deploy the application
-                bat 'npm run start'
-            }
-            post {
-                success {
-                    echo 'Deployment successful!'
-                }
-                failure {
-                    echo 'Deployment failed! Please check the logs for more details.'
-                }
-            }
-        }
     }
 }
+
