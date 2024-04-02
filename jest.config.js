@@ -7,11 +7,5 @@ module.exports = {
     '<rootDir>/node_modules/',
     '<rootDir>/packages/core/node_modules/'
   ],
-  reporters: [
-    'default',
-    ['jest-junit', { outputDirectory: './test-results', outputName: 'junit.xml' }]
-  ],
-  collectCoverage: true,
-  coverageReporters: ['html', 'cobertura'],
-  coverageDirectory: './test-results' // Set the coverage directory to 'test-results'
+
 };
