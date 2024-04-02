@@ -5,7 +5,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 // Checkout the code from the GitHub repository
-                git branch: 'main', url: 'https://github.com/ManoharMP3/evershop123.git'
+                git branch: 'dev', url: 'https://github.com/ManoharMP3/evershop123.git'
             }
         }
         
