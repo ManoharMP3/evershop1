@@ -1,4 +1,3 @@
-
 pipeline {
     agent any
     
@@ -13,6 +12,7 @@ pipeline {
         stage('Test') {
             steps {
                 // Install jest-junit and run tests
+                bat 'npm install regenerator-runtime'
                 bat 'npx jest --coverage ./unit'
             }
             post {
@@ -21,42 +21,30 @@ pipeline {
                 }
                 failure {
                     echo 'Tests failed! Please check the logs for more details.'
-                }
-            }
-        }
-        
-        stage('Build') {
-            steps {
-                // Build the application
-                bat 'npx create-evershop-app my-app'
-                bat 'npm install @evershop/evershop'
-                bat 'npm run setup'
-                bat 'npm run build'
-            }
-            post {
-                success {
-                    echo 'Build successful!'
-                }
-                failure {
-                    echo 'Build failed! Please check the logs for more details.'
-                }
-            }
-        }
-        
-        stage('Deploy') {
-            steps {
-                // Deploy the application
-                bat 'npm run start'
-            }
-            post {
-                success {
-                    echo 'Deployment successful!'
-                }
-                failure {
-                    echo 'Deployment failed! Please check the logs for more details.'
+                    error 'Tests failed!'
                 }
             }
         }
     }
+    post {
+        always {
+            // Publish JUnit test results
+            junit 'test-results/junit.xml'
+            // Archive code coverage report
+            archiveArtifacts 'test-results/junit.xml'
+            archiveArtifacts 'test-results/cobertura-coverage.xml'
+            archiveArtifacts 'test-results/index.html'
+        }
+        success {
+            // Publish HTML code coverage report
+            publishHTML(target: [
+                allowMissing: true,
+                alwaysLinkToLastBuild: true,
+                keepAll: true,
+                reportDir: 'Man',
+                reportFiles: 'index.html',
+                reportName: 'Code Coverage Report'
+            ])
+        }
+    }
 }
-
