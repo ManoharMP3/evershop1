@@ -12,7 +12,7 @@ pipeline {
         stage('Test') {
             steps {
                 // Install jest-junit and run tests
-                bat 'npm i jest-junit'
+                
                 bat 'npx jest --coverage ./unit'
             }
             post {
