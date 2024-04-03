@@ -12,7 +12,7 @@ pipeline {
         stage('Test') {
             steps {
                 // Install jest-junit and run tests
-                
+                bat 'npm install regenerator-runtime'
                 bat 'npx jest --coverage ./unit'
             }
             post {
@@ -31,7 +31,24 @@ pipeline {
             // Publish JUnit test results
             junit 'test-results/junit.xml'
             // Archive code coverage report
+            archiveArtifacts 'test-results/junit.xml'
             archiveArtifacts 'test-results/cobertura-coverage.xml'
+            archiveArtifacts 'test-results/index.html'
+            
+            // Calculate code coverage percentage
+            script {
+                def coverageXml = readFile('test-results/cobertura-coverage.xml')
+                def matcher = coverageXml =~ /line-rate="([\d.]+)"/
+                def coveragePercentage = matcher ? Float.parseFloat(matcher[0][1]) * 100 : null
+
+                // Check if code coverage is below the threshold (e.g., 70%)
+                if (coveragePercentage != null && coveragePercentage < 40) {
+                    echo "Code coverage dropped below 70% (${coveragePercentage}%), failing the pipeline."
+                    error "Code coverage dropped below 70% (${coveragePercentage}%)"
+                } else {
+                    echo "Code coverage (${coveragePercentage}%) meets or exceeds the threshold (70%)."
+                }
+            }
         }
         success {
             // Publish HTML code coverage report
@@ -39,10 +56,18 @@ pipeline {
                 allowMissing: true,
                 alwaysLinkToLastBuild: true,
                 keepAll: true,
-                reportDir: 'test-results',
+                reportDir: 'Man',
                 reportFiles: 'index.html',
                 reportName: 'Code Coverage Report'
             ])
         }
+        failure {
+            echo 'Tests failed! Please check the logs for more details.'
+            error 'Tests failed!'
+            
+        }
+        
     }
+    
 }
+
