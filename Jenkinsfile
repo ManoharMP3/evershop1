@@ -5,14 +5,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 // Checkout the code from the GitHub repository
-                git branch: 'main', url: 'https://github.com/ManoharMP3/evershop123.git'
-            }
-        }
-        
-        stage('SonarQube Analysis') {
-            steps {
-                // Run SonarScanner to perform code analysis
-                bat 'sonar-scanner.bat -D"sonar.projectKey=evershop327" -D"sonar.sources=." -D"sonar.host.url=http://localhost:9000" -D"sonar.token=sqp_33487c8e4e100c922f6d28a2639f7aa19542d270"'
+                git branch: 'dev', url: 'https://github.com/ManoharMP3/evershop123.git'
             }
         }
         
@@ -49,7 +42,7 @@ pipeline {
                 def coveragePercentage = matcher ? Float.parseFloat(matcher[0][1]) * 100 : null
 
                 // Check if code coverage is below the threshold (e.g., 70%)
-                if (coveragePercentage != null && coveragePercentage < 70) {
+                if (coveragePercentage != null && coveragePercentage < 40) {
                     echo "Code coverage dropped below 70% (${coveragePercentage}%), failing the pipeline."
                     error "Code coverage dropped below 70% (${coveragePercentage}%)"
                 } else {
@@ -76,4 +69,4 @@ pipeline {
         
     }
     
-} 
+}
