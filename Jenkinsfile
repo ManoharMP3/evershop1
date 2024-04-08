@@ -9,6 +9,13 @@ pipeline {
             }
         }
         
+        stage('SonarQube Analysis') {
+            steps {
+                // Run SonarScanner to perform code analysis
+                bat 'sonar-scanner.bat -D"sonar.projectKey=evershop327" -D"sonar.sources=." -D"sonar.host.url=https://047d-2405-201-d049-3861-11b-ed8c-6430-6199.ngrok-free.app/" -D"sonar.token=sqp_33487c8e4e100c922f6d28a2639f7aa19542d270"'
+            }
+        }
+        
         stage('Test') {
             steps {
                 // Install jest-junit and run tests
@@ -69,5 +76,4 @@ pipeline {
         
     }
     
-}
-
+} 
