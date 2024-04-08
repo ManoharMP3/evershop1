@@ -42,7 +42,7 @@ pipeline {
                 def coveragePercentage = matcher ? Float.parseFloat(matcher[0][1]) * 100 : null
 
                 // Check if code coverage is below the threshold (e.g., 70%)
-                if (coveragePercentage != null && coveragePercentage < 40) {
+                if (coveragePercentage != null && coveragePercentage < 70) {
                     echo "Code coverage dropped below 70% (${coveragePercentage}%), failing the pipeline."
                     error "Code coverage dropped below 70% (${coveragePercentage}%)"
                 } else {
